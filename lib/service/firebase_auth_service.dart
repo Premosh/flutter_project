@@ -30,6 +30,10 @@ class FirebaseAuthService {
   }
 
   void signOutUser() async {
-    await _auth.signOut();
+    try{
+      await _auth.signOut();
+    }catch(e){
+      print('Something went wrong!!!!');
+    }
   }
 }
