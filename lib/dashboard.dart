@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:whatever/service/firebase_auth_service.dart';
+import 'package:whatever/service/firebase_firestore_service.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+  Dashboard({super.key});
+
+  List<dynamic> users= [];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext dashboardContext) {
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
+      appBar: AppBar(
+        title: Text('Dashboard'),
+        actions: [
+          ElevatedButton(
             onPressed: () async {
               await showDialog(
-                  context: context,
+                  context: dashboardContext,
                   builder: (BuildContext dialogContext) {
                     return AlertDialog(
                       icon: Icon(Icons.warning),
-                      title: Text('Signout bar'),
-                      content: Text('Are you sure you want to sign out?'),
+                      title: Text('Signout User'),
+                      content: Text('Are you sure you want to signout?'),
                       actions: [
                         GestureDetector(
                           child: Text('Yes'),
@@ -24,13 +29,13 @@ class Dashboard extends StatelessWidget {
                             final firebaseAuthService = FirebaseAuthService();
                             firebaseAuthService.signOutUser();
                             Navigator.of(dialogContext).pop();
-                            Navigator.of(context)
+                            Navigator.of(dashboardContext)
                                 .pushReplacementNamed('/login');
                           },
                         ),
                         GestureDetector(
                           child: Text('No'),
-                          onTap: (){
+                          onTap: () {
                             Navigator.of(dialogContext).pop();
                           },
                         ),
@@ -38,7 +43,29 @@ class Dashboard extends StatelessWidget {
                     );
                   });
             },
-            child: Text('Signout')),
+            child: Text('Signout'),
+          )
+        ],
+      ),
+      body: FutureBuilder(
+        future: FirebaseFirestoreService().getAllUser(),
+        builder: (context, snapShot) {
+          if (snapShot.hasError) {
+            return Center(
+              child: Icon(Icons.warning),
+            );
+          }
+          if(snapShot.connectionState == ConnectionState.done){
+            users=snapShot.data as List;
+            return Center(child: Text('The users is ${users[0]}'),
+            );
+          }
+          return SizedBox(
+            height: 50,
+            width: 50,
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }
