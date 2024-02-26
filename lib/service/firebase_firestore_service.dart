@@ -36,7 +36,7 @@ class FirebaseFirestoreService {
     }
   }
 
-  ///Function to get value from firebase.
+  ///Function to create user from firebase.
   void signUpUser({required UserModel userModel}) async {
     try {
       CollectionReference _usersCollection =
@@ -46,6 +46,27 @@ class FirebaseFirestoreService {
           .whenComplete(() => print('User Created'));
     } catch (e) {
       print('Something went wrong :( !!!');
+    }
+  }
+
+  ///This is to get user details according to id.
+  Future<UserModel?> getUserDetails({required String uId}) async {
+    try {
+      final CollectionReference _userCollectionReference =
+          await firebaseFirestore.collection('users');
+      final documentSnapshot =
+          await _userCollectionReference.where('id', isEqualTo: uId).get();
+      if (documentSnapshot.docs.isNotEmpty) {
+        final userModel = documentSnapshot.docs
+            .map((doc) => UserModel.fromJson(
+                doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+            .first;
+        return userModel;
+      } else {
+        print('Document not found........');
+      }
+    } catch (e) {
+      print('Something went wrong');
     }
   }
 }
