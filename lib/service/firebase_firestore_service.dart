@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whatever/model/user_model.dart';
 
 class FirebaseFirestoreService {
   final firebaseFirestore = FirebaseFirestore.instance;
@@ -32,6 +33,19 @@ class FirebaseFirestoreService {
       return usersList;
     } catch (e) {
       print('Error getting user details $e');
+    }
+  }
+
+  ///Function to get value from firebase.
+  void signUpUser({required UserModel userModel}) async {
+    try {
+      CollectionReference _usersCollection =
+          await firebaseFirestore.collection('users');
+      await _usersCollection
+          .add(userModel.toJson())
+          .whenComplete(() => print('User Created'));
+    } catch (e) {
+      print('Something went wrong :( !!!');
     }
   }
 }
