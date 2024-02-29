@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:whatever/registration_form.dart';
 import 'package:whatever/splash.dart';
 import 'package:whatever/top_picks.dart';
 import 'package:whatever/utilities/default_firebase_config.dart';
+import 'package:whatever/utilities/profile.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +34,7 @@ void main() {
       '/topPicks': (context) => TopPicks(),
       '/myApp': (context) => MyApp(),
       '/dashboard': (context) => Dashboard(),
+      '/profile': (context) => Profile(),
     },
     initialRoute: '/',
   ));
@@ -50,9 +53,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
   final pages = {
-    Login(),
+    Dashboard(),
     TopPicks(),
-    Register(),
+    Profile(),
   };
 
   // This widget is the root of your application.
@@ -69,13 +72,13 @@ class _MyAppState extends State<MyApp> {
         },
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.login), label: 'Login'
+              icon: Icon(Icons.dashboard), label: 'Dashboard'
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.star), label: 'Top Picks'
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.app_registration), label: 'Register'
+              icon: Icon(Icons.person), label: 'Profile'
           ),
         ],
       ),

@@ -13,7 +13,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState(){
     // T000: implement initState
-    Timer(Duration(seconds: 5),()=> Navigator.of(context).pushNamed('/login'));
+    Timer(Duration(seconds: 5),()=> Navigator.of(context).pushReplacementNamed('/login'));
     super.initState();
   }
   @override

@@ -36,4 +36,9 @@ class FirebaseAuthService {
       print('Something went wrong!!!!');
     }
   }
+
+  Future<User?> getLoggedInUser() async{
+    User? user= await _auth.authStateChanges().first;
+    return user;
+  }
 }

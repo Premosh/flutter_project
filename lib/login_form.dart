@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whatever/service/firebase_auth_service.dart';
 
 class Login extends StatefulWidget {
@@ -16,7 +17,27 @@ class _LoginState extends State<Login> {
   bool? _isChecked = false;
 
   @override
+  void initState() {
+    print('Init state called');
+    checkLoggedUsers();
+    super.initState();
+  }
+  ///This is used to checked if user is logged in or not.
+  ///If user is already logged in then firebase session exists and user object is not null and is directed to dashboard.
+  checkLoggedUsers() async{
+    final firebaseAuthService = FirebaseAuthService();
+    final user=await firebaseAuthService.getLoggedInUser();
+    if(user!=null){
+      print('User signed in');
+      Navigator.of(context).pushReplacementNamed('/myApp');
+    }else{
+      print('User signed out');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print('Build called');
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
@@ -97,8 +118,10 @@ class _LoginState extends State<Login> {
                           final password= _passwordController.text;
                           final User? user= await firebaseAuthService.signInUserWithEmailAndPassword(email, password);
                           if(user!=null){
+                            final SharedPreferences prefs=await SharedPreferences.getInstance();
+                            await prefs.setString('uId', user.uid);
                             print('Login success');
-                            Navigator.of(context).pushReplacementNamed('/dashboard');
+                            Navigator.of(context).pushReplacementNamed('/myApp');
                           }
                           else{
                             print('Login failure');
