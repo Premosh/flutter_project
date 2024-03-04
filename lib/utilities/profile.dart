@@ -1,7 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatever/model/user_model.dart';
+import 'package:whatever/service/firebase_firestore_service.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  late String uid = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserUidFromSharedPrefs();
+    super.initState();
+  }
+
+  void getUserUidFromSharedPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('uId');
+    setState(() {
+      uid = id ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,39 +37,68 @@ class Profile extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: ListView(
-          children: [
-            ProfileImage(),
-            SizedBox(
-              height: 20,
-            ),
-            BasicDetails(),
-            SizedBox(
-              height: 20,
-            ),
-            MenuWidgets(
-              title: 'Settings',
-              onPressed: (){
-                print('Settings Clicked');
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            MenuWidgets(
-              title: 'Notifications',
-              onPressed: (){
-                print('Notifications Clicked');
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            MenuWidgets(
-              title: 'About App',
-            ),
-          ],
-        ),
+        child: (uid.isNotEmpty)
+            ? FutureBuilder(
+                future: FirebaseFirestoreService().getUserDetails(uId: uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    ///If Connection is established but firebase returns an error
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error loading profile',
+                          style: TextStyle(color: Colors.cyan),
+                        ),
+                      );
+                    }
+
+                    ///If the connection is established and firebase returns data
+                    if (snapshot.hasData) {
+                      final userModel = snapshot.data;
+                      return ListView(
+                        children: [
+                          ProfileImage(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          BasicDetails(
+                            userModel: userModel,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          MenuWidgets(
+                            title: 'Settings',
+                            onPressed: () {
+                              print('Settings Clicked');
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          MenuWidgets(
+                            title: 'Notifications',
+                            onPressed: () {
+                              print('Notifications Clicked');
+                            },
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          MenuWidgets(
+                            title: 'About App',
+                          ),
+                        ],
+                      );
+                    }
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                })
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
@@ -58,7 +112,7 @@ class ProfileImage extends StatelessWidget {
       height: 100,
       width: 100,
       child: CircleAvatar(
-        backgroundImage: AssetImage('assets/images/icegif-1264.gif'),
+        backgroundImage: AssetImage('assets/images/infinity.gif'),
       ),
     );
   }
@@ -66,6 +120,10 @@ class ProfileImage extends StatelessWidget {
 
 ///This is the widget for displaying the basic details of the user
 class BasicDetails extends StatelessWidget {
+  BasicDetails({required this.userModel});
+
+  final UserModel? userModel;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -89,23 +147,33 @@ class BasicDetails extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Name: '),
+          (userModel != null)
+              ? Text('Name: ${userModel!.fullName}')
+              : Text('Name:-'),
           SizedBox(
             height: 5,
           ),
-          Text('Email: '),
+          (userModel != null)
+              ? Text('Email: ${userModel!.emailAddress}')
+              : Text('Email: -'),
           SizedBox(
             height: 5,
           ),
-          Text('Phone: '),
+          (userModel != null)
+              ? Text('Phone: ${userModel!.number}')
+              : Text('Phone: -'),
           SizedBox(
             height: 5,
           ),
-          Text('Address: '),
+          (userModel != null)
+              ? Text('Address: ${userModel!.address}')
+              : Text('Address: -'),
           SizedBox(
             height: 5,
           ),
-          Text('Gender: '),
+          (userModel != null)
+              ? Text('Gender: ${userModel!.gender}')
+              : Text('Gender: -'),
         ],
       ),
     );

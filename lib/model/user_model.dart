@@ -31,10 +31,12 @@ class UserModel {
       QueryDocumentSnapshot<Map<String, dynamic>> document) {
     final userData = document.data();
     return UserModel(
-      fullName: userData['full_name'],
-      number: userData['phone_number'],
+      fullName: userData['fullName'],
+      emailAddress: userData['email'],
+      number: userData['contact'],
       address: userData['address'],
       gender: userData['gender'],
     );
   }
 }
+`

@@ -29,6 +29,8 @@ class _LoginState extends State<Login> {
     final user=await firebaseAuthService.getLoggedInUser();
     if(user!=null){
       print('User signed in');
+      final SharedPreferences prefs= await SharedPreferences.getInstance();
+      prefs.setString('uId', user.uid);
       Navigator.of(context).pushReplacementNamed('/myApp');
     }else{
       print('User signed out');
