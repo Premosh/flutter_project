@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Enter your username:',
+                labelText: 'Enter your email address',
               ),
               validator: (usernameValue) {
                 if (usernameValue == null || usernameValue.trim().isEmpty) {
@@ -72,7 +72,7 @@ class _LoginState extends State<Login> {
               obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Enter your password:',
+                labelText: 'Enter your password',
               ),
               validator: (passwordValue) {
                 if (passwordValue == null || passwordValue.trim().isEmpty) {

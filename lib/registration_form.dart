@@ -41,7 +41,7 @@ class _RegisterState extends State<Register> {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.only(left: 10, top: 20),
-            width: MediaQuery.of(context).size.width / 1.5,
+            width: MediaQuery.of(context).size.width / 1.1,
             child: Column(
               children: [
                 TextFormField(

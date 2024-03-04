@@ -109,10 +109,10 @@ class ProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
-      width: 100,
+      height: 150,
+      width: 150,
       child: CircleAvatar(
-        backgroundImage: AssetImage('assets/images/infinity.gif'),
+        backgroundImage: AssetImage('assets/images/raiden.gif'),
       ),
     );
   }
