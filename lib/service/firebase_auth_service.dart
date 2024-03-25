@@ -41,4 +41,16 @@ class FirebaseAuthService {
     User? user= await _auth.authStateChanges().first;
     return user;
   }
+
+  //Function to update email address in auth of firebase
+  void updateAuthEmail({required String email}){
+    try{
+      if(_auth.currentUser!=null){
+        _auth.currentUser!.updateEmail(email);
+      }
+    }
+    catch(e){
+      print('Something went wrong!!');
+    }
+  }
 }

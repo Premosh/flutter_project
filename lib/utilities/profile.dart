@@ -34,6 +34,11 @@ class _ProfileState extends State<Profile> {
       backgroundColor: Colors.blue,
       appBar: AppBar(
         title: Text('View Profile'),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.of(context).pushNamed('/usersList'),
+              icon: Icon(Icons.people))
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -174,6 +179,12 @@ class BasicDetails extends StatelessWidget {
           (userModel != null)
               ? Text('Gender: ${userModel!.gender}')
               : Text('Gender: -'),
+          SizedBox(
+            height: 5,
+          ),
+          ElevatedButton(
+              onPressed: () => Navigator.of(context).pushNamed('/editProfile', arguments: userModel),
+              child: Text('Edit Profile')),
         ],
       ),
     );

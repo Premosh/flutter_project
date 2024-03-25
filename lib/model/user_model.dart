@@ -31,6 +31,7 @@ class UserModel {
       QueryDocumentSnapshot<Map<String, dynamic>> document) {
     final userData = document.data();
     return UserModel(
+      uId: userData['id'],
       fullName: userData['fullName'],
       emailAddress: userData['email'],
       number: userData['contact'],

@@ -1,14 +1,15 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:whatever/dashboard.dart';
+import 'package:whatever/editprofile.dart';
 import 'package:whatever/listpage.dart';
 import 'package:whatever/listview_page.dart';
 import 'package:whatever/login_form.dart';
 import 'package:whatever/registration_form.dart';
 import 'package:whatever/splash.dart';
 import 'package:whatever/top_picks.dart';
+import 'package:whatever/users_list.dart';
 import 'package:whatever/utilities/default_firebase_config.dart';
 import 'package:whatever/utilities/profile.dart';
 
@@ -35,6 +36,8 @@ void main() {
       '/myApp': (context) => MyApp(),
       '/dashboard': (context) => Dashboard(),
       '/profile': (context) => Profile(),
+      '/usersList': (context) => usersList(),
+      '/editProfile': (context) => EditProfile(),
     },
     initialRoute: '/',
   ));

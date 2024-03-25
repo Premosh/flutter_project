@@ -69,4 +69,67 @@ class FirebaseFirestoreService {
       print('Something went wrong');
     }
   }
+
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      final CollectionReference _userCollectionReference =
+          await firebaseFirestore.collection('users');
+      final snapShot = await _userCollectionReference.get();
+      final usersList = snapShot.docs
+          .map((doc) => UserModel.fromJson(
+              doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+          .toList();
+      return usersList;
+    } catch (e) {
+      print("Something went wrong!!");
+    }
+    return [];
+  }
+
+  ///Function to update userDetails in FirestoreDB
+  Future<UserModel?> updateUserDetailsUsingID(
+      {required String uid, required UserModel userModel}) async {
+    try {
+      CollectionReference _usersCollection =
+          await firebaseFirestore.collection('users');
+      final snapShot = await _usersCollection.where('id', isEqualTo: uid).get();
+      if (snapShot.docs.isNotEmpty) {
+        final documentId = snapShot.docs.first.id;
+        await _usersCollection.doc(documentId).update(userModel.toJson());
+        final userModelUpdated = await snapShot.docs
+            .map((doc) => UserModel.fromJson(
+                doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+            .single;
+        return userModelUpdated;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Something went wrong');
+    }
+    return null;
+  }
+
+  //Delete user from database using uid
+  Future<List<UserModel>> deleteUserUsingUid({required String uid}) async {
+    try {
+      CollectionReference _usersCollection =
+          await firebaseFirestore.collection('users');
+      final snapShot = await _usersCollection.where('id', isEqualTo: uid).get();
+      if (snapShot.docs.isNotEmpty) {
+        final documentId = snapShot.docs.first.id;
+        await _usersCollection.doc(documentId).delete();
+        final usersList = snapShot.docs
+            .map((doc) => UserModel.fromJson(
+            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+            .toList();
+        return usersList;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Something went wrong!');
+    }
+    return [];
+  }
 }
