@@ -51,9 +51,10 @@ class FirebaseFirestoreService {
 
   ///This is to get user details according to id.
   Future<UserModel?> getUserDetails({required String uId}) async {
+    print('User id $uId');
     try {
       final CollectionReference _userCollectionReference =
-          await firebaseFirestore.collection('users');
+          firebaseFirestore.collection('users');
       final documentSnapshot =
           await _userCollectionReference.where('id', isEqualTo: uId).get();
       if (documentSnapshot.docs.isNotEmpty) {
@@ -68,6 +69,7 @@ class FirebaseFirestoreService {
     } catch (e) {
       print('Something went wrong');
     }
+    return null;
   }
 
   Future<List<UserModel>> getAllUsers() async {
@@ -121,7 +123,7 @@ class FirebaseFirestoreService {
         await _usersCollection.doc(documentId).delete();
         final usersList = snapShot.docs
             .map((doc) => UserModel.fromJson(
-            doc as QueryDocumentSnapshot<Map<String, dynamic>>))
+                doc as QueryDocumentSnapshot<Map<String, dynamic>>))
             .toList();
         return usersList;
       } else {

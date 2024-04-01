@@ -1,35 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:whatever/controller/user_controller.dart';
 import 'package:whatever/model/user_model.dart';
 import 'package:whatever/service/firebase_firestore_service.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatelessWidget {
   const Profile({super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
-  late String uid = '';
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getUserUidFromSharedPrefs();
-    super.initState();
-  }
-
-  void getUserUidFromSharedPrefs() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('uId');
-    setState(() {
-      uid = id ?? '';
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final UserController userController = Get.put(UserController());
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -40,71 +21,50 @@ class _ProfileState extends State<Profile> {
               icon: Icon(Icons.people))
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: (uid.isNotEmpty)
-            ? FutureBuilder(
-                future: FirebaseFirestoreService().getUserDetails(uId: uid),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    ///If Connection is established but firebase returns an error
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          'Error loading profile',
-                          style: TextStyle(color: Colors.cyan),
-                        ),
-                      );
-                    }
-
-                    ///If the connection is established and firebase returns data
-                    if (snapshot.hasData) {
-                      final userModel = snapshot.data;
-                      return ListView(
-                        children: [
-                          ProfileImage(),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          BasicDetails(
-                            userModel: userModel,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MenuWidgets(
-                            title: 'Settings',
-                            onPressed: () {
-                              print('Settings Clicked');
-                            },
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MenuWidgets(
-                            title: 'Notifications',
-                            onPressed: () {
-                              print('Notifications Clicked');
-                            },
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          MenuWidgets(
-                            title: 'About App',
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                })
-            : Center(
-                child: CircularProgressIndicator(),
-              ),
-      ),
+      body: Obx(() {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          child: (userController.uId.value.isNotEmpty)
+              ? ListView(
+                  children: [
+                    ProfileImage(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    BasicDetails(
+                      userModel: userController.userModel.value,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    MenuWidgets(
+                      title: 'Settings',
+                      onPressed: () {
+                        print('Settings Clicked');
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    MenuWidgets(
+                      title: 'Notifications',
+                      onPressed: () {
+                        print('Notifications Clicked');
+                      },
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    MenuWidgets(
+                      title: 'About App',
+                    ),
+                  ],
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
+        );
+      }),
     );
   }
 }
@@ -183,7 +143,8 @@ class BasicDetails extends StatelessWidget {
             height: 5,
           ),
           ElevatedButton(
-              onPressed: () => Navigator.of(context).pushNamed('/editProfile', arguments: userModel),
+              onPressed: () => Navigator.of(context)
+                  .pushNamed('/editProfile', arguments: userModel),
               child: Text('Edit Profile')),
         ],
       ),
