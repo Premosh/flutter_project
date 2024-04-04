@@ -92,13 +92,14 @@ class FirebaseFirestoreService {
   Future<UserModel?> updateUserDetailsUsingID(
       {required String uid, required UserModel userModel}) async {
     try {
-      CollectionReference _usersCollection =
-          await firebaseFirestore.collection('users');
-      final snapShot = await _usersCollection.where('id', isEqualTo: uid).get();
+      CollectionReference usersCollection =
+           firebaseFirestore.collection('users');
+      final snapShot = await usersCollection.where('id', isEqualTo: uid).get();
       if (snapShot.docs.isNotEmpty) {
         final documentId = snapShot.docs.first.id;
-        await _usersCollection.doc(documentId).update(userModel.toJson());
-        final userModelUpdated = await snapShot.docs
+        await usersCollection.doc(documentId).update(userModel.toJson());
+        final updatedSnapShot = await usersCollection.where('id', isEqualTo: uid).get();
+        final userModelUpdated =  updatedSnapShot.docs
             .map((doc) => UserModel.fromJson(
                 doc as QueryDocumentSnapshot<Map<String, dynamic>>))
             .single;
